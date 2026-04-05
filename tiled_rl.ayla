@@ -1,0 +1,109 @@
+import rl
+import tiled
+
+type TiledMapRL struct {
+    Map      tiled.TiledMap
+    Textures map[string]rl.Texture2D
+}
+
+fun LoadMap(path string) (TiledMapRL, error) {
+    m, err := tiled.LoadMap(path)
+    ayla err != nil {
+        back TiledMapRL{}, err
+    }
+
+    textures := map[string]rl.Texture2D{}
+
+    four _, ts := range m.Tilesets {
+        ayla !json.Has(textures, ts.Image) {
+            textures[ts.Image] = rl.LoadTexture(ts.Image)
+        }
+    }
+
+    back TiledMapRL{
+        Map:      m,
+        Textures: textures,
+    }, nil
+}
+
+fun DrawMap(m TiledMapRL) {
+    four _, layer := range m.Map.Layers {
+        ayla !layer.Visible { next }
+
+        four _, tile := range layer.Tiles {
+            ts := tiled.FindTileset(m.Map.Tilesets, tile.Id)
+            tex := m.Textures[ts.Image]
+
+            src := rl.Rectangle{
+                X:      float(tile.SrcX),
+                Y:      float(tile.SrcY),
+                Width:  float(ts.TileWidth),
+                Height: float(ts.TileHeight),
+            }
+
+            pos := rl.Vector2{
+                X: float(tile.X),
+                Y: float(tile.Y),
+            }
+
+            rl.DrawTextureRec(tex, src, pos, rl.NewColor(255, 255, 255, 255))
+        }
+    }
+}
+
+fun DrawMapEx(m TiledMapRL, tint rl.Color) {
+    four _, layer := range m.Map.Layers {
+        ayla !layer.Visible { next }
+
+        four _, tile := range layer.Tiles {
+            ts := tiled.FindTileset(m.Map.Tilesets, tile.Id)
+            tex := m.Textures[ts.Image]
+
+            src := rl.Rectangle{
+                X:      float(tile.SrcX),
+                Y:      float(tile.SrcY),
+                Width:  float(ts.TileWidth),
+                Height: float(ts.TileHeight),
+            }
+
+            pos := rl.Vector2{
+                X: float(tile.X),
+                Y: float(tile.Y),
+            }
+
+            rl.DrawTextureRec(tex, src, pos, tint)
+        }
+    }
+}
+
+fun DrawLayer(m TiledMapRL, layerName string) {
+    four _, layer := range m.Map.Layers {
+        ayla layer.Name != layerName { next }
+        ayla !layer.Visible { next }
+
+        four _, tile := range layer.Tiles {
+            ts := tiled.FindTileset(m.Map.Tilesets, tile.Id)
+            tex := m.Textures[ts.Image]
+
+            src := rl.Rectangle{
+                X:      float(tile.SrcX),
+                Y:      float(tile.SrcY),
+                Width:  float(ts.TileWidth),
+                Height: float(ts.TileHeight),
+            }
+
+            pos := rl.Vector2{
+                X: float(tile.X),
+                Y: float(tile.Y),
+            }
+
+            rl.DrawTextureRec(tex, src, pos, rl.NewColor(255, 255, 255, 255))
+        }
+    }
+}
+
+fun UnloadMap(m TiledMapRL) {
+    four _, tex := range m.Textures {
+        rl.UnloadTexture(tex)
+    }
+}

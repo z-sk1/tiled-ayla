@@ -1,0 +1,115 @@
+import json
+
+type Tileset struct {
+    FirstGid   int
+    TileWidth  int
+    TileHeight int
+    Columns    int
+    Image      string
+}
+
+type Tile struct {
+    Id   int
+    X    int
+    Y    int
+    SrcX int
+    SrcY int
+}
+
+type Layer struct {
+    Name    string
+    Width   int
+    Height  int
+    Visible bool
+    Tiles   []Tile
+}
+
+type TiledMap struct {
+    Width      int
+    Height     int
+    TileWidth  int
+    TileHeight int
+    Layers     []Layer
+    Tilesets   []Tileset
+}
+
+fun LoadMap(path string) (TiledMap, error) {
+    data, err := json.ParseFile(path)
+    ayla err != nil {
+        back TiledMap{}, err
+    }
+
+    m := TiledMap{
+        Width:      int(data["width"]),
+        Height:     int(data["height"]),
+        TileWidth:  int(data["tilewidth"]),
+        TileHeight: int(data["tileheight"]),
+    }
+
+    four _, tsData := range data["tilesets"] {
+        ts := Tileset{
+            FirstGid:   int(tsData["firstgid"]),
+            TileWidth:  int(tsData["tilewidth"]),
+            TileHeight: int(tsData["tileheight"]),
+            Columns:    int(tsData["columns"]),
+            Image:      toString(tsData["image"]),
+        }
+        m.Tilesets = append(m.Tilesets, ts)
+    }
+
+    four _, lData := range data["layers"] {
+        layer := Layer{
+            Name:    toString(lData["name"]),
+            Width:   int(lData["width"]),
+            Height:  int(lData["height"]),
+            Visible: toBool(lData["visible"]),
+        }
+
+        four i, idVal := range lData["data"] {
+            id := int(idVal)
+            ayla id == 0 { next }
+
+            ts := FindTileset(m.Tilesets, id)
+            localId := id - ts.FirstGid
+
+            tile := Tile{
+                Id:   id,
+                X:    (i % layer.Width) * m.TileWidth,
+                Y:    (i / layer.Width) * m.TileHeight,
+                SrcX: (localId % ts.Columns) * ts.TileWidth,
+                SrcY: (localId / ts.Columns) * ts.TileHeight,
+            }
+
+            layer.Tiles = append(layer.Tiles, tile)
+        }
+
+        m.Layers = append(m.Layers, layer)
+    }
+
+    back m, nil
+}
+
+fun FindTileset(tilesets []Tileset, id int) (Tileset) {
+    egg result Tileset
+    four _, ts := range tilesets {
+        ayla ts.FirstGid <= id {
+            result = ts
+        }
+    }
+    back result
+}
+
+fun GetTile(m TiledMap, layer int, x int, y int) (Tile, error) {
+    ayla layer < 0 || layer >= len(m.Layers) {
+        back Tile{}, "layer index out of bounds"
+    }
+
+    l := m.Layers[layer]
+    idx := y * l.Width + x
+
+    ayla idx < 0 || idx >= len(l.Tiles) {
+        back Tile{}, "tile index out of bounds"
+    }
+
+    back l.Tiles[idx], nil
+}
