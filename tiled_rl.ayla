@@ -1,5 +1,6 @@
 import rl
 import tiled
+import json
 
 type TiledMapRL struct {
     Map      tiled.TiledMap

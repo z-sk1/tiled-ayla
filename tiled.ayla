@@ -1,4 +1,5 @@
 import json
+import conv
 
 type Tileset struct {
     FirstGid   int
@@ -47,22 +48,27 @@ fun LoadMap(path string) (TiledMap, error) {
     }
 
     four _, tsData := range data["tilesets"] {
+    putln(tsData)
         ts := Tileset{
             FirstGid:   int(tsData["firstgid"]),
             TileWidth:  int(tsData["tilewidth"]),
             TileHeight: int(tsData["tileheight"]),
             Columns:    int(tsData["columns"]),
-            Image:      toString(tsData["image"]),
+            Image:      conv.String(tsData["image"]),
         }
         m.Tilesets = append(m.Tilesets, ts)
     }
 
     four _, lData := range data["layers"] {
+        name := conv.String(lData["name"])
+
+        vis, _ := conv.Bool(lData["visible"])
+
         layer := Layer{
-            Name:    toString(lData["name"]),
+            Name:    name,
             Width:   int(lData["width"]),
             Height:  int(lData["height"]),
-            Visible: toBool(lData["visible"]),
+            Visible: vis,
         }
 
         four i, idVal := range lData["data"] {
