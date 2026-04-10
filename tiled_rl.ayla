@@ -54,8 +54,8 @@ fun DrawMap(m TiledMapRL) {
             }
 
             pos := rl.Vector2{
-                X: float(tile.X * ts.TileWidth),
-                Y: float(tile.Y * ts.TileHeight),
+                X: float(tile.X),
+                Y: float(tile.Y),
             }
 
             rl.DrawTextureRec(tex, src, pos, rl.NewColor(255, 255, 255, 255))
@@ -79,8 +79,8 @@ fun DrawMapEx(m TiledMapRL, tint rl.Color) {
             }
 
             pos := rl.Vector2{
-                X: float(tile.X * ts.TileWidth),
-                Y: float(tile.Y * ts.TileHeight),
+                X: float(tile.X),
+                Y: float(tile.Y),
             }
 
             rl.DrawTextureRec(tex, src, pos, tint)
@@ -105,8 +105,8 @@ fun DrawLayer(m TiledMapRL, layerName string) {
             }
 
             pos := rl.Vector2{
-                X: float(tile.X * ts.TileWidth),
-                Y: float(tile.Y * ts.TileHeight),
+                X: float(tile.X),
+                Y: float(tile.Y),
             }
 
             rl.DrawTextureRec(tex, src, pos, rl.NewColor(255, 255, 255, 255))
