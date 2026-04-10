@@ -76,7 +76,7 @@ fun LoadMap(path string) (TiledMap, error) {
                 FirstGid:   getInt(tsData["firstgid"]),
                 TileWidth:  getInt(tsData["tilewidth"]),
                 TileHeight: getInt(tsData["tileheight"]),
-                Columns:    getInt(tsData["columns"]), # safe now
+                Columns:    getInt(tsData["columns"]),
                 Image:      getString(tsData["image"]),
             }
             m.Tilesets = append(m.Tilesets, ts)
@@ -105,7 +105,7 @@ fun LoadMap(path string) (TiledMap, error) {
                 ayla id == 0 { next }
 
                 ts := FindTileset(m.Tilesets, id)
-                ayla ts.Columns == 0 { next } # avoid div by zero
+                ayla ts.Columns == 0 { next }
 
                 localId := id - ts.FirstGid
 
