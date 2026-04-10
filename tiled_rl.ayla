@@ -7,37 +7,37 @@ type TiledMapRL struct {
     Textures map[string]rl.Texture2D
 }
 
-//fun LoadMap(path string) (TiledMapRL, error) {
-//    m, err := tiled.LoadMap(path)
-//
-//    ayla err != nil {
-//        back TiledMapRL{}, err
-//    }
-//
-//    dir := ""
-//    four i, c := range path {
-//        ayla c == "/" || c == "\\" {
-//            dir = path[:i+1]
-//        }
-//    }
-//
-//    textures := map[string]rl.Texture2D{}
-//    four _, ts := range m.Tilesets {
-//        tex := textures[ts.Image]
-//        ayla tex.Id == 0 {
-//            fullPath := dir + ts.Image
-//            putln("Loading:", fullPath)
-//            textures[ts.Image] = rl.LoadTexture(fullPath)
-//        }
-//    }
-//
-//    result := TiledMapRL{
-//        Map:      m,
-//        Textures: textures,
-//    }
-//
-//    back result, nil
-//}
+fun LoadMap(path string) (TiledMapRL, error) {
+    m, err := tiled.LoadMap(path)
+
+    ayla err != nil {
+        back TiledMapRL{}, err
+    }
+
+    dir := ""
+    four i, c := range path {
+        ayla c == "/" || c == "\\" {
+            dir = path[:i+1]
+        }
+    }
+
+    textures := map[string]rl.Texture2D{}
+    four _, ts := range m.Tilesets {
+        tex := textures[ts.Image]
+        ayla tex.Id == 0 {
+            fullPath := dir + ts.Image
+            putln("Loading:", fullPath)
+            textures[ts.Image] = rl.LoadTexture(fullPath)
+        }
+    }
+
+    result := TiledMapRL{
+        Map:      m,
+        Textures: textures,
+    }
+
+    back result, nil
+}
 
 fun DrawMap(m TiledMapRL) {
     putln(typeof(m))
