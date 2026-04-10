@@ -48,7 +48,7 @@ fun LoadMap(path string) (TiledMap, error) {
     }
 
     four _, tsData := range data["tilesets"] {
-    putln(tsData)
+
         ts := Tileset{
             FirstGid:   int(tsData["firstgid"]),
             TileWidth:  int(tsData["tilewidth"]),
@@ -107,14 +107,14 @@ fun FindTileset(tilesets []Tileset, id int) (Tileset) {
 
 fun GetTile(m TiledMap, layer int, x int, y int) (Tile, error) {
     ayla layer < 0 || layer >= len(m.Layers) {
-        back Tile{}, "layer index out of bounds"
+        back Tile{}, errorf("layer index out of bounds")
     }
 
     l := m.Layers[layer]
     idx := y * l.Width + x
 
     ayla idx < 0 || idx >= len(l.Tiles) {
-        back Tile{}, "tile index out of bounds"
+        back Tile{}, errorf("tile index out of bounds")
     }
 
     back l.Tiles[idx], nil

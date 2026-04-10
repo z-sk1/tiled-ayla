@@ -13,14 +13,21 @@ fun LoadMap(path string) (TiledMapRL, error) {
         back TiledMapRL{}, err
     }
 
-    textures := map[string]rl.Texture2D{}
-
-    four _, ts := range m.Tilesets {
-        ayla !json.Has(textures, ts.Image) {
-            textures[ts.Image] = rl.LoadTexture(ts.Image)
+    // get directory of map file
+    dir := ""
+    four i, c := range path {
+        ayla c == '/' || c == '\\' {
+            dir = path[:i+1]
         }
     }
 
+    textures := map[string]rl.Texture2D{}
+    four _, ts := range m.Tilesets {
+        ayla !json.Has(textures, ts.Image) {
+            fullPath := dir + ts.Image
+            textures[ts.Image] = rl.LoadTexture(fullPath)
+        }
+    }
     back TiledMapRL{
         Map:      m,
         Textures: textures,
@@ -28,6 +35,8 @@ fun LoadMap(path string) (TiledMapRL, error) {
 }
 
 fun DrawMap(m TiledMapRL) {
+    putln(typeof(m))
+    putln(m)
     four _, layer := range m.Map.Layers {
         ayla !layer.Visible { next }
 
@@ -36,8 +45,8 @@ fun DrawMap(m TiledMapRL) {
             tex := m.Textures[ts.Image]
 
             src := rl.Rectangle{
-                X:      float(tile.SrcX),
-                Y:      float(tile.SrcY),
+                X: float(tile.X * ts.TileWidth),
+                Y: float(tile.Y * ts.TileHeight),
                 Width:  float(ts.TileWidth),
                 Height: float(ts.TileHeight),
             }
