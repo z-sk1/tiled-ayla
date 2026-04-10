@@ -49,7 +49,15 @@ fun DrawMap(m TiledMapRL) {
         ayla !layer.Visible { next }
 
         four _, tile := range layer.Tiles {
+            ayla tile.Id == 0 {
+                next
+            }
+
             ts := tiled.FindTileset(m.Map.Tilesets, tile.Id)
+            ayla ts == nil {
+                next
+            }
+
             tex := m.Textures[ts.Image]
 
             src := rl.Rectangle{
@@ -64,7 +72,7 @@ fun DrawMap(m TiledMapRL) {
                 Y: float(tile.Y),
             }
 
-            rl.DrawTextureRec(tex, src, pos, rl.NewColor(255, 255, 255, 255))
+            rl.DrawTextureRec(tex, src, pos, rl.NewColor(255,255,255,255))
         }
     }
 }
@@ -74,7 +82,15 @@ fun DrawMapEx(m TiledMapRL, tint rl.Color) {
         ayla !layer.Visible { next }
 
         four _, tile := range layer.Tiles {
+            ayla tile.Id == 0 {
+                next
+            }
+
             ts := tiled.FindTileset(m.Map.Tilesets, tile.Id)
+            ayla ts == nil {
+                next
+            }
+
             tex := m.Textures[ts.Image]
 
             src := rl.Rectangle{
@@ -100,7 +116,15 @@ fun DrawLayer(m TiledMapRL, layerName string) {
         ayla !layer.Visible { next }
 
         four _, tile := range layer.Tiles {
+            ayla tile.Id == 0 {
+                next
+            }
+
             ts := tiled.FindTileset(m.Map.Tilesets, tile.Id)
+            ayla ts == nil {
+                next
+            }
+
             tex := m.Textures[ts.Image]
 
             src := rl.Rectangle{
@@ -115,7 +139,7 @@ fun DrawLayer(m TiledMapRL, layerName string) {
                 Y: float(tile.Y),
             }
 
-            rl.DrawTextureRec(tex, src, pos, rl.NewColor(255, 255, 255, 255))
+            rl.DrawTextureRec(tex, src, pos, rl.NewColor(255,255,255,255))
         }
     }
 }
