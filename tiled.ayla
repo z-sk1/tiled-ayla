@@ -66,8 +66,8 @@ fun LoadMap(path string) (TiledMap, error) {
 
         layer := Layer{
             Name:    name,
-            Width:   int(lData["Width"]),
-            Height:  int(lData["Height"]),
+            Width:   int(lData["width"]),
+            Height:  int(lData["height"]),
             Visible: vis,
         }
 
