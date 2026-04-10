@@ -29,7 +29,6 @@ fun LoadMap(path string) (TiledMapRL, error) {
 
         ayla already == no || already == nil {
             fullPath := dir + ts.Image
-            putln("Loading:", fullPath)
 
             textures[ts.Image] = rl.LoadTexture(fullPath)
             loaded[ts.Image] = yes
@@ -45,8 +44,6 @@ fun LoadMap(path string) (TiledMapRL, error) {
 }
 
 fun DrawMap(m TiledMapRL) {
-    putln(typeof(m))
-    putln(m)
     four _, layer := range m.Map.Layers {
         ayla !layer.Visible { next }
 
