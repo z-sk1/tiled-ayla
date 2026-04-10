@@ -34,6 +34,28 @@ type TiledMap struct {
     Tilesets   []Tileset
 }
 
+fun getInt(v any) int {
+    ayla v == nil {
+        back 0
+    }
+    back int(v)
+}
+
+fun getString(v any) string {
+    ayla v == nil {
+        back ""
+    }
+    back conv.String(v)
+}
+
+fun getBool(v any) bool {
+    ayla v == nil {
+        back no
+    }
+    b, _ := conv.Bool(v)
+    back b
+}
+
 fun LoadMap(path string) (TiledMap, error) {
     data, err := json.ParseFile(path)
     ayla err != nil {
@@ -41,55 +63,65 @@ fun LoadMap(path string) (TiledMap, error) {
     }
 
     m := TiledMap{
-        Width:      int(data["width"]),
-        Height:     int(data["height"]),
-        TileWidth:  int(data["tilewidth"]),
-        TileHeight: int(data["tileheight"]),
+        Width:      getInt(data["width"]),
+        Height:     getInt(data["height"]),
+        TileWidth:  getInt(data["tilewidth"]),
+        TileHeight: getInt(data["tileheight"]),
     }
 
-    four _, tsData := range data["tilesets"] {
-
-        ts := Tileset{
-            FirstGid:   int(tsData["firstgid"]),
-            TileWidth:  int(tsData["tilewidth"]),
-            TileHeight: int(tsData["tileheight"]),
-            Columns:    int(tsData["columns"]),
-            Image:      conv.String(tsData["image"]),
+    tsArr := data["tilesets"]
+    ayla tsArr != nil {
+        four _, tsData := range tsArr {
+            ts := Tileset{
+                FirstGid:   getInt(tsData["firstgid"]),
+                TileWidth:  getInt(tsData["tilewidth"]),
+                TileHeight: getInt(tsData["tileheight"]),
+                Columns:    getInt(tsData["columns"]), # safe now
+                Image:      getString(tsData["image"]),
+            }
+            m.Tilesets = append(m.Tilesets, ts)
         }
-        m.Tilesets = append(m.Tilesets, ts)
     }
 
-    four _, lData := range data["layers"] {
-        name := conv.String(lData["name"])
+    layersArr := data["layers"]
+    ayla layersArr != nil {
+        four _, lData := range layersArr {
 
-        vis, _ := conv.Bool(lData["visible"])
-
-        layer := Layer{
-            Name:    name,
-            Width:   int(lData["width"]),
-            Height:  int(lData["height"]),
-            Visible: vis,
-        }
-
-        four i, idVal := range lData["data"] {
-            id := int(idVal)
-            ayla id == 0 { next }
-
-            ts := FindTileset(m.Tilesets, id)
-            localId := id - ts.FirstGid
-
-            tile := Tile{
-                Id:   id,
-                X:    (i % layer.Width) * m.TileWidth,
-                Y:    (i / layer.Width) * m.TileHeight,
-                SrcX: (localId % ts.Columns) * ts.TileWidth,
-                SrcY: (localId / ts.Columns) * ts.TileHeight,
+            layer := Layer{
+                Name:    getString(lData["name"]),
+                Width:   getInt(lData["width"]),
+                Height:  getInt(lData["height"]),
+                Visible: getBool(lData["visible"]),
             }
 
-            layer.Tiles = append(layer.Tiles, tile)
-        }
+            dataArr := lData["data"]
+            ayla dataArr == nil {
+                m.Layers = append(m.Layers, layer)
+                next
+            }
 
-        m.Layers = append(m.Layers, layer)
+            four i, idVal := range dataArr {
+                id := getInt(idVal)
+                ayla id == 0 { next }
+
+                ts := FindTileset(m.Tilesets, id)
+                ayla ts.Columns == 0 { next } # avoid div by zero
+
+                localId := id - ts.FirstGid
+
+                tile := Tile{
+                    Id:   id,
+                    X:    (i % layer.Width) * m.TileWidth,
+                    Y:    (i / layer.Width) * m.TileHeight,
+                    SrcX: (localId % ts.Columns) * ts.TileWidth,
+                    SrcY: (localId / ts.Columns) * ts.TileHeight,
+                }
+
+                layer.Tiles = append(layer.Tiles, tile)
+            }
+
+            m.Layers = append(m.Layers, layer)
+        }
     }
 
     back m, nil
