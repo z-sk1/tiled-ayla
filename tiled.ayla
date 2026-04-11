@@ -62,7 +62,7 @@ fun getString(v thing) (string) {
     ayla v == nil {
         back ""
     }
-    back "${v}"
+    back conv.String(v)
 }
 
 fun getBool(v thing) (bool) {
