@@ -63,11 +63,8 @@ fun getString(v thing) (string) {
         back ""
     }
 
-    ayla typeof(v) == "string" {
-        back v
-    }
-
-    back ""
+    s := v.(string)
+    back s
 }
 
 fun getBool(v thing) (bool) {
