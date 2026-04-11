@@ -63,12 +63,10 @@ fun getString(v thing) (string) {
         back ""
     }
 
-    s, ok := v.(string)
-    ayla ok {
-        back s
+    ayla typeof(v) == "string" {
+        back v
     }
 
-    putln("WARNING: not a string:", v)
     back ""
 }
 
