@@ -43,7 +43,7 @@ type Object struct {
     Y          int
     Width      int
     Height     int
-    Properties map[string]thing
+    Properties map[string]interface{}
 }
 
 type ObjectGroup struct {
