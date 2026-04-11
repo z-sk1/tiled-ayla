@@ -26,12 +26,29 @@ type Layer struct {
 }
 
 type TiledMap struct {
+    Width        int
+    Height       int
+    TileWidth    int
+    TileHeight   int
+    Layers       []Layer
+    Tilesets     []Tileset
+    ObjectGroups []ObjectGroup
+}
+
+type Object struct {
+    Id         int
+    Name       string
+    Type       string
+    X          int
+    Y          int
     Width      int
     Height     int
-    TileWidth  int
-    TileHeight int
-    Layers     []Layer
-    Tilesets   []Tileset
+    Properties map[string]thing
+}
+
+type ObjectGroup struct {
+    Name    string
+    Objects []Object
 }
 
 fun getInt(v thing) (int) {
@@ -86,6 +103,35 @@ fun LoadMap(path string) (TiledMap, error) {
     layersArr := data["layers"]
     ayla layersArr != nil {
         four _, lData := range layersArr {
+            layerType := getString(lData["type"])
+
+            ayla layerType == "objectgroup" {
+                group := ObjectGroup{
+                    Name: getString(lData["name"]),
+                }
+                four _, objData := range lData["objects"] {
+                    obj := Object{
+                        Id:     getInt(objData["id"]),
+                        Name:   getString(objData["name"]),
+                        Type:   getString(objData["type"]),
+                        X:      getInt(objData["x"]),
+                        Y:      getInt(objData["y"]),
+                        Width:  getInt(objData["width"]),
+                        Height: getInt(objData["height"]),
+                    }
+                    // parse properties if present
+                    props := objData["properties"]
+                    ayla props != nil {
+                        obj.Properties = map[string]thing{}
+                        four _, prop := range props {
+                            obj.Properties[getString(prop["name"])] = prop["value"]
+                        }
+                    }
+                    group.Objects = append(group.Objects, obj)
+                }
+                m.ObjectGroups = append(m.ObjectGroups, group)
+                next
+            }
 
             layer := Layer{
                 Name:    getString(lData["name"]),
