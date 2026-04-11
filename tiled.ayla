@@ -34,21 +34,21 @@ type TiledMap struct {
     Tilesets   []Tileset
 }
 
-fun getInt(v any) int {
+fun getInt(v thing) (int) {
     ayla v == nil {
         back 0
     }
     back int(v)
 }
 
-fun getString(v any) string {
+fun getString(v thing) (string) {
     ayla v == nil {
         back ""
     }
     back conv.String(v)
 }
 
-fun getBool(v any) bool {
+fun getBool(v thing) (bool) {
     ayla v == nil {
         back no
     }
