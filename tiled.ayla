@@ -62,7 +62,14 @@ fun getString(v thing) (string) {
     ayla v == nil {
         back ""
     }
-    back conv.String(v)
+
+    s, ok := v.(string)
+    ayla ok {
+        back s
+    }
+
+    putln("WARNING: not a string:", v)
+    back ""
 }
 
 fun getBool(v thing) (bool) {
